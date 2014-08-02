@@ -30,7 +30,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/ueventd.z.rc:root/ueventd.z.rc \
     $(LOCAL_PATH)/fstab.z:root/fstab.z
 
-
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/audio_policy.conf:system/etc/audio_policy.conf \
     $(LOCAL_PATH)/configs/snd_soc_msm_Taiko:system/etc/snd_soc_msm/snd_soc_msm_Taiko \
@@ -110,26 +109,33 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Audio Configuration
 PRODUCT_PROPERTY_OVERRIDES += \
-	persist.audio.fluence.voicecall=true \
-	persist.audio.dualmic.config=endfire \
-	af.resampler.quality=4 \
-	audio.offload.buffer.size.kb=32 \
-	audio.offload.gapless.enabled=false \
-	av.offload.enable=true
+    ro.qc.sdk.audio.ssr=false \
+    ro.qc.sdk.audio.fluencetype=fluence \
+    persist.audio.fluence.mode=endfire \
+    persist.audio.handset.mic=digital \
+    persist.audio.voicecall.mic=0 \
+    persist.audio.voice.clarity=none \
+    persist.audio.aanc.enable=false \
+    persist.audio.handset_rx_type=DEFAULT \
+    persist.audio.nsenabled=ON \
+    persist.speaker.prot.enable=false \
+    persist.audio.spkcall_2mic=OFF \
+    af.resampler.quality=255 \
+    audio.offload.buffer.size.kb=32 \
+    audio.offload.gapless.enabled=false \
+    av.offload.enable=true \
+    ro.config.vc_call_vol_steps=12 \
+    ro.config.vc_call_vol_default=8
 
-# Do not power down SIM card when modem is sent to Low Power Mode.
+# Radio
 PRODUCT_PROPERTY_OVERRIDES += \
-	persist.radio.apm_sim_not_pwdn=1
-
-# Ril sends only one RIL_UNSOL_CALL_RING, so set call_ring.multiple to false
-PRODUCT_PROPERTY_OVERRIDES += \
-	ro.telephony.call_ring.multiple=0
-
-PRODUCT_PROPERTY_OVERRIDES += \
-	ro.telephony.ril_class=LgeLteRIL \
+	persist.radio.apm_sim_not_pwdn=1 \
+	ro.telephony.call_ring.multiple=0 \
+	persist.radio.mode_pref_nv10=1 \
+    ro.telephony.ril_class=LgeLteRIL \
 	ro.telephony.ril.v3=qcomdsds
 
-#Upto 3 layers can go through overlays
+# Up to 3 layers can go through overlays
 PRODUCT_PROPERTY_OVERRIDES += persist.hwc.mdpcomp.enable=true
 
 PRODUCT_TAGS += dalvik.gc.type-precise
@@ -154,45 +160,48 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
 	camera.z
 
+# Audio
 PRODUCT_PACKAGES += \
-	audio_policy.default \
 	audio.primary.msm8974 \
 	audio.a2dp.default \
 	audio.usb.default \
 	audio.r_submix.default \
-	libaudio-resampler
+	libaudio-resampler \
+	libqcomvisualizer \
+	libqcomvoiceprocessing \
+	libqcomvoiceprocessingdescriptors
 
 PRODUCT_PACKAGES += \
     libmm-omxcore \
-	libdivxdrmdecrypt \
-	libOmxVdec \
-	libOmxVenc \
-	libOmxCore \
-	libstagefrighthw \
-	libc2dcolorconvert
+    libdivxdrmdecrypt \
+    libOmxVdec \
+    libOmxVenc \
+    libOmxCore \
+    libstagefrighthw \
+    libc2dcolorconvert
 
 PRODUCT_PACKAGES += \
-	libloc_adapter \
-	libloc_eng \
-	libloc_api_v02 \
-	libgps.utils \
-	gps.msm8974
+    libloc_adapter \
+    libloc_eng \
+    libloc_api_v02 \
+    libgps.utils \
+    gps.msm8974
 
 PRODUCT_PACKAGES += \
-	hwaddrs
+    hwaddrs
 
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-	rild.libpath=/vendor/lib/libril-qc-qmi-1.so
+	rild.libpath=/system/vendor/lib/libril-qc-qmi-1.so
 
 PRODUCT_PROPERTY_OVERRIDES += \
-	drm.service.enabled=true
+    drm.service.enabled=true
 
 PRODUCT_PROPERTY_OVERRIDES += \
-	ro.bt.bdaddr_path=/data/misc/bdaddr
+    ro.bt.bdaddr_path=/data/misc/bdaddr
 
 PRODUCT_PROPERTY_OVERRIDES += \
-	wifi.interface=wlan0 \
-	wifi.supplicant_scan_interval=15
+    wifi.interface=wlan0 \
+    wifi.supplicant_scan_interval=120
 
 # Enable AAC 5.1 output
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -202,14 +211,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.egl.recordable.rgba8888=1
 
 PRODUCT_PROPERTY_OVERRIDES += \
-	ro.qualcomm.sensors.qmd=true \
-	ro.qc.sdk.sensors.gestures=true \
-	ro.qualcomm.sensors.pedometer=true \
-	ro.qualcomm.sensors.pam=true \
-	ro.qualcomm.sensors.scrn_ortn=true \
-	debug.qualcomm.sns.hal=1 \
-	debug.qualcomm.sns.daemon=1 \
-	debug.qualcomm.sns.libsensor1=e
+    ro.qc.sensors.wl_dis=true
+
+# Setup custom emergency number list based on the MCC. This is needed by RIL
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.radio.custom_ecc=1
 
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 	persist.sys.usb.config=mtp
